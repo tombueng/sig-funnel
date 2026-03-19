@@ -1,0 +1,115 @@
+// ============================================================================
+// routes.js — Shared API route handlers
+// ============================================================================
+//
+// This module contains the core business logic for all API endpoints.
+// It is platform-agnostic — used by:
+//   - server.js     (Express, for local dev / Glitch / StackBlitz / Docker)
+//   - api/*.js      (Vercel serverless functions)
+//
+// Each handler receives (req, res) with Express-compatible interface.
+// ============================================================================
+
+const insign = require('./insign-client');
+
+// ---------------------------------------------------------------------------
+// In-memory session store (demo only!)
+// In production, use a database or Redis to persist session data.
+// Shared across all routes within the same process.
+// ---------------------------------------------------------------------------
+const sessions = new Map();
+
+// ============================================================================
+// POST /api/session — Create a new signing session
+// ============================================================================
+async function createSession(req, res) {
+  try {
+    const { firstName, lastName, street, zip, city, birthdate } = req.body;
+
+    if (!firstName || !lastName || !street || !zip || !city || !birthdate) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    const userData = { firstName, lastName, street, zip, city, birthdate };
+    const sessionKey = require('uuid').v4();
+    const docId = 'mandate-doc';
+
+    // Build preFilledFields and read the PDF template
+    const { getTemplateAndFields, TEMPLATE_PATH } = require('./pdf-generator');
+    const { preFilledFields } = getTemplateAndFields(userData);
+    const fs = require('fs');
+    const pdfBuffer = fs.readFileSync(TEMPLATE_PATH);
+
+    // Single API call: create session + upload PDF + prefill fields + get JWT
+    const sessionResult = await insign.createSession(
+      `SEPA Mandate - ${firstName} ${lastName}`,
+      sessionKey, docId, preFilledFields, pdfBuffer
+    );
+
+    sessions.set(sessionKey, {
+      insignSessionId: sessionResult.sessionid,
+      docId, jwt: sessionResult.jwt, userData,
+      status: 'signing', createdAt: new Date().toISOString()
+    });
+
+    res.json({
+      sessionKey,
+      insignSessionId: sessionResult.sessionid,
+      jwt: sessionResult.jwt,
+      insignBase: insign.INSIGN_BASE
+    });
+  } catch (err) {
+    console.error('Error creating session:', err.response?.data || err.message);
+    res.status(500).json({ error: err.message, details: err.response?.data });
+  }
+}
+
+// ============================================================================
+// GET /api/session/:key/status — Check signing status
+// ============================================================================
+async function getStatus(req, res) {
+  try {
+    const key = req.params.key || req.query.key;
+    const session = sessions.get(key);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+
+    const status = await insign.getStatus(session.insignSessionId);
+    res.json({ status: session.status, insignStatus: status.status, raw: status });
+  } catch (err) {
+    console.error('Error getting status:', err.response?.data || err.message);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// ============================================================================
+// GET /api/session/:key/document — Download signed PDF
+// ============================================================================
+async function getDocument(req, res, disposition) {
+  try {
+    const key = req.params.key || req.query.key;
+    const session = sessions.get(key);
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+
+    const pdfBuffer = await insign.downloadDocument(
+      session.insignSessionId, session.docId, false
+    );
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition',
+      `${disposition || 'inline'}; filename="SEPA-Mandat-signed.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('Error downloading document:', err.response?.data || err.message);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// ============================================================================
+// Ensure template exists (call on startup)
+// ============================================================================
+async function ensureReady() {
+  const { ensureTemplate } = require('./pdf-generator');
+  await ensureTemplate();
+}
+
+module.exports = { createSession, getStatus, getDocument, ensureReady, sessions };

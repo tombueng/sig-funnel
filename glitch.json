@@ -1,0 +1,9 @@
+{
+  "install": "npm install",
+  "start": "node src/server.js",
+  "watch": {
+    "restart": {
+      "include": ["src/"]
+    }
+  }
+}
