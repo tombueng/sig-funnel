@@ -3,4 +3,4 @@ test-results/
 playwright-report/
 .insign-docs/
 *.zip
-mandate-template.pdf
+assets/mandate-template.pdf

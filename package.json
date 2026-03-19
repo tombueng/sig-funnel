@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "npx playwright test --reporter=list",
-    "test:headed": "npx playwright test --headed --reporter=list",
-    "test:debug": "npx playwright test --debug"
+    "test": "npx playwright test --config=tests/playwright.config.js --reporter=list",
+    "test:headed": "npx playwright test --config=tests/playwright.config.js --headed --reporter=list",
+    "test:debug": "npx playwright test --config=tests/playwright.config.js --debug"
   },
   "dependencies": {
     "axios": "^1.7.0",

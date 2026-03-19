@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEPA Mandate — Digital Signature</title>
+  <title>Maklermandat — Digitale Unterschrift</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <!-- Inter font for modern dev aesthetic -->
@@ -212,81 +212,373 @@
       left: 8px;
     }
 
-    /* ---- Main content ---- */
+    /* ===================== MAIN CONTENT ===================== */
     .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
       min-width: 0;
+      background: #f8f9fc;
+      overflow-y: auto;
     }
 
+    /* ---- Top bar ---- */
     .brand-bar {
       background: var(--brand);
-      padding: 10px 24px;
+      padding: 0 28px;
       display: flex;
       align-items: center;
+      height: 52px;
+      flex-shrink: 0;
+    }
+    .brand-bar .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-weight: 700;
+      font-size: .95rem;
+      letter-spacing: -.2px;
+    }
+    .brand-bar .brand-logo i { font-size: 1.15rem; opacity: .85; }
+    .brand-bar .brand-env {
+      margin-left: auto;
+      font-size: .7rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.45);
+      letter-spacing: .3px;
+      text-transform: uppercase;
     }
 
-    /* Step indicator */
-    .step-indicator { display:flex; justify-content:center; gap:0; margin:2rem 0 2.5rem; }
-    .step-dot {
-      display:flex; flex-direction:column; align-items:center; position:relative; flex:1; max-width:180px;
+    /* ---- Funnel area ---- */
+    .funnel-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 3rem;
     }
-    .step-dot .circle {
-      width:44px; height:44px; border-radius:50%; background:#dee2e6; color:#fff;
-      display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.1rem;
-      transition: all .3s; z-index:2; position:relative;
+
+    /* ---- Step indicator (minimal pill style) ---- */
+    .step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 20px 24px 0;
     }
-    .step-dot.active .circle  { background: var(--brand); box-shadow:0 0 0 6px rgba(26,35,126,.15); }
-    .step-dot.done .circle    { background: var(--accent); }
-    .step-dot .label { margin-top:.45rem; font-size:.78rem; color:#888; font-weight:500; }
-    .step-dot.active .label   { color: var(--brand); font-weight:700; }
-    .step-dot.done .label     { color: var(--accent); }
-    .step-dot::after {
-      content:''; position:absolute; top:22px; left:calc(50% + 22px); right:calc(-50% + 22px);
-      height:3px; background:#dee2e6; z-index:1;
+    .step-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 16px;
+      border-radius: 100px;
+      font-size: .75rem;
+      font-weight: 600;
+      color: #a0a4b8;
+      background: transparent;
+      transition: all .3s;
+      white-space: nowrap;
     }
-    .step-dot:last-child::after { display:none; }
-    .step-dot.done::after { background: var(--accent); }
-    .step-dot.active::after { background: linear-gradient(90deg, var(--brand) 40%, #dee2e6 40%); }
+    .step-pill .s-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .68rem;
+      font-weight: 700;
+      background: #e4e6ef;
+      color: #a0a4b8;
+      transition: all .3s;
+      flex-shrink: 0;
+    }
+    .step-pill.active {
+      background: rgba(26,35,126,.07);
+      color: var(--brand);
+    }
+    .step-pill.active .s-num {
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(26,35,126,.25);
+    }
+    .step-pill.done { color: #34a853; }
+    .step-pill.done .s-num {
+      background: #34a853;
+      color: #fff;
+    }
+    .step-pill.done .s-num i { font-size: .65rem; }
+    .step-conn {
+      width: 28px;
+      height: 2px;
+      background: #e4e6ef;
+      border-radius: 1px;
+      transition: background .3s;
+      flex-shrink: 0;
+    }
+    .step-conn.done { background: #34a853; }
 
-    /* Cards */
-    .card-step { max-width:680px; margin:0 auto; border:0; border-radius:16px;
-      box-shadow:0 4px 24px rgba(0,0,0,.06); }
-    .card-step .card-body { padding:2.2rem 2.5rem; }
+    /* ---- Cards ---- */
+    .card-step {
+      max-width: 540px;
+      margin: 28px auto 0;
+      border: 0;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.04);
+    }
+    .card-step .card-body { padding: 2rem 2.2rem; }
 
-    .btn-brand { background:var(--brand); color:#fff; border:0; padding:.7rem 2rem; border-radius:8px; font-weight:600; }
-    .btn-brand:hover { background:var(--brand-lt); color:#fff; }
-    .btn-accent { background:var(--accent); color:#fff; border:0; }
-    .btn-accent:hover { background:#00b848; color:#fff; }
-    .form-control:focus { border-color:var(--brand); box-shadow:0 0 0 .2rem rgba(26,35,126,.12); }
+    /* ---- Buttons ---- */
+    .btn-brand {
+      background: var(--brand);
+      color: #fff;
+      border: 0;
+      padding: .65rem 1.8rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: .88rem;
+      letter-spacing: -.1px;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-brand:hover {
+      background: var(--brand-lt);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26,35,126,.25);
+    }
+    .btn-brand:active { transform: translateY(0); box-shadow: none; }
 
-    .hero-icon { font-size:3.5rem; color:var(--brand); }
+    .btn-accent {
+      background: #1a8f4a;
+      color: #fff;
+      border: 0;
+      padding: .65rem 1.8rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: .88rem;
+      transition: all .2s;
+    }
+    .btn-accent:hover {
+      background: #157a3e;
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26,143,74,.25);
+    }
+    .btn-accent:active { transform: translateY(0); box-shadow: none; }
 
-    /* Signature pad area */
-    #sig-container { margin-top: 1rem; }
+    .btn-ghost {
+      background: transparent;
+      color: #64687a;
+      border: 1px solid #dfe1ea;
+      padding: .6rem 1.4rem;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: .86rem;
+      transition: all .15s;
+    }
+    .btn-ghost:hover { border-color: #b0b4c8; color: #3a3d50; background: #f4f5fa; }
+
+    /* ---- Form controls ---- */
+    .funnel-form .form-label {
+      font-size: .78rem;
+      font-weight: 600;
+      color: #4a4d63;
+      margin-bottom: .35rem;
+      letter-spacing: .1px;
+    }
+    .funnel-form .form-control {
+      border: 1.5px solid #e0e2ec;
+      border-radius: 10px;
+      padding: .6rem .9rem;
+      font-size: .88rem;
+      color: #1d1f2f;
+      background: #fafbfe;
+      transition: all .15s;
+    }
+    .funnel-form .form-control::placeholder { color: #b4b7c9; }
+    .funnel-form .form-control:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(26,35,126,.08);
+      background: #fff;
+    }
+    .funnel-form .form-control.is-invalid {
+      border-color: #e53935;
+      box-shadow: 0 0 0 3px rgba(229,57,53,.08);
+    }
+    .funnel-form .form-select {
+      border: 1.5px solid #e0e2ec;
+      border-radius: 10px;
+      padding: .6rem .9rem;
+      font-size: .88rem;
+      color: #1d1f2f;
+      background-color: #fafbfe;
+    }
+    .funnel-form .form-select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(26,35,126,.08);
+    }
+
+    /* ---- Step 1: Welcome ---- */
+    .welcome-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eef0ff, #dde1ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+    }
+    .welcome-icon i { font-size: 1.7rem; color: var(--brand); }
+    .welcome-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #1d1f2f;
+      margin-bottom: .4rem;
+      letter-spacing: -.3px;
+    }
+    .welcome-sub {
+      font-size: .88rem;
+      color: #6b6f84;
+      line-height: 1.55;
+      max-width: 400px;
+      margin: 0 auto 1.5rem;
+    }
+    .feature-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 340px;
+      margin: 0 auto 1.8rem;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .84rem;
+      color: #3a3d50;
+      font-weight: 500;
+    }
+    .feature-item .f-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: .75rem;
+    }
+    .feature-item .f-icon.green { background: #e8f5e9; color: #2e7d32; }
+    .feature-item .f-icon.blue  { background: #e3f2fd; color: #1565c0; }
+    .feature-item .f-icon.amber { background: #fff8e1; color: #f57f17; }
+
+    /* ---- Step 3: Signature ---- */
+    #sig-container { margin-top: .8rem; }
     .sig-field-wrap {
-      border: 2px solid var(--brand); border-radius:12px; padding:1rem;
-      background: #fafbff; margin-bottom:1rem;
+      border: 1.5px solid #e0e2ec;
+      border-radius: 12px;
+      padding: 14px;
+      background: #fafbfe;
+      margin-bottom: .8rem;
+      transition: border-color .15s;
+    }
+    .sig-field-wrap:focus-within,
+    .sig-field-wrap:hover {
+      border-color: var(--brand);
     }
     .sig-field-wrap .sig-label {
-      font-size:.8rem; color:#666; margin-bottom:.5rem; font-weight:600; text-transform:uppercase;
+      font-size: .7rem;
+      color: #8b8fa3;
+      margin-bottom: .5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
     }
     .sig-field-wrap canvas.pad {
-      border: 1px solid #ccc; border-radius:8px; background:#fff; cursor:crosshair;
-      width:100%; height:160px; display:block;
+      border: 1px dashed #d0d3e0;
+      border-radius: 10px;
+      background: #fff;
+      cursor: crosshair;
+      width: 100%;
+      height: 140px;
+      display: block;
+      transition: border-color .15s;
     }
-    .sig-field-wrap .sig-actions { margin-top:.6rem; display:flex; gap:.5rem; }
-    .sig-done-img { border:1px solid #ccc; border-radius:8px; max-width:100%; height:auto; padding:1rem; }
+    .sig-field-wrap:hover canvas.pad { border-color: #b0b4c8; }
+    .sig-field-wrap .sig-actions {
+      margin-top: .5rem;
+      display: flex;
+      gap: .5rem;
+    }
+    .sig-field-wrap .btn-clear {
+      font-size: .72rem;
+      padding: .3rem .7rem;
+      border-radius: 6px;
+      border: 1px solid #e0e2ec;
+      background: #fff;
+      color: #6b6f84;
+      font-weight: 500;
+      transition: all .15s;
+      cursor: pointer;
+    }
+    .sig-field-wrap .btn-clear:hover {
+      background: #f4f5fa;
+      border-color: #b0b4c8;
+      color: #3a3d50;
+    }
+    .sig-done-img {
+      border: 1px solid #e0e2ec;
+      border-radius: 10px;
+      max-width: 100%;
+      height: auto;
+      padding: .8rem;
+      background: #fafbfe;
+    }
 
-    /* Status bar in signature step */
+    /* Status bar */
     #insign-status-bar {
-      font-size:.8rem; color:#888; margin-top:.5rem; padding:.5rem; background:#f0f0f0;
-      border-radius:6px; font-family:'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: #8b8fa3;
+      margin-top: .6rem;
+      padding: .45rem .7rem;
+      background: #f4f5fa;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid #e8eaf0;
     }
 
-    /* General manual & deploy panels */
+    /* ---- Step 4: Done ---- */
+    .done-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #e8f5e9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .done-badge i { font-size: 1.5rem; color: #2e7d32; }
+    .done-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1d1f2f;
+      margin-bottom: .3rem;
+    }
+    .pdf-frame {
+      width: 100%;
+      height: 440px;
+      border: 1px solid #e0e2ec;
+      border-radius: 10px;
+      background: #fafbfe;
+    }
+
+    /* ---- General manual & deploy panels ---- */
     .general-manual { max-width:860px; margin:2rem auto; }
+    .general-manual .card { border: 1px solid #e0e2ec; }
     .general-manual .card-body { font-size:.88rem; line-height:1.7; }
     .general-manual pre { background:#1e1e2e; color:#cdd6f4; padding:1rem; border-radius:8px; font-size:.78rem; overflow-x:auto; white-space:pre; }
     .general-manual h5 { color:var(--brand); border-bottom:2px solid var(--brand); padding-bottom:.3rem; margin-top:1.5rem; }
@@ -295,6 +587,29 @@
     .general-manual .important { background:#e3f2fd; border-left:4px solid #1a237e; padding:.6rem .8rem; border-radius:4px; margin:.5rem 0; font-size:.82rem; }
     .general-manual table { font-size:.82rem; }
     .general-manual table th { background:#f0f0f5; }
+
+    /* ---- Deploy cards ---- */
+    .deploy-grid .card {
+      border: 1px solid #e0e2ec;
+      border-radius: 12px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .deploy-grid .card:hover {
+      border-color: #c5c8d8;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .deploy-grid h6 { font-size: .85rem; }
+    .deploy-grid pre {
+      background: #f4f5fa;
+      color: #3a3d50;
+      border: 1px solid #e8eaf0;
+      border-radius: 8px;
+      padding: .7rem;
+      font-size: .72rem;
+      margin: 0;
+    }
+    .deploy-grid code { font-family: 'JetBrains Mono', monospace; font-size: .72rem; }
+    .deploy-grid .badge { font-size: .6rem; font-weight: 600; }
 
     /* ===================== MARKDOWN RENDERING (dark dev theme) ===================== */
     .doc-rendered {
@@ -603,25 +918,28 @@
 
     <!-- Top bar -->
     <nav class="brand-bar">
-      <span class="text-white fw-bold fs-5"><i class="bi bi-vector-pen me-2"></i>Sig-Funnel</span>
-      <span class="text-white-50 ms-auto small">SEPA Mandate Demo</span>
+      <div class="brand-logo"><i class="bi bi-vector-pen"></i>Sig-Funnel</div>
+      <div class="brand-env">Maklermandat Demo</div>
     </nav>
 
+    <div class="funnel-scroll">
+
     <!-- Progress -->
-    <div class="container">
-      <div class="step-indicator" id="progress">
-        <div class="step-dot active" data-step="1">
-          <div class="circle">1</div><div class="label">Welcome</div>
-        </div>
-        <div class="step-dot" data-step="2">
-          <div class="circle">2</div><div class="label">Your Data</div>
-        </div>
-        <div class="step-dot" data-step="3">
-          <div class="circle">3</div><div class="label">Signature</div>
-        </div>
-        <div class="step-dot" data-step="4">
-          <div class="circle">4</div><div class="label">Done</div>
-        </div>
+    <div class="step-bar" id="progress">
+      <div class="step-pill active" data-step="1">
+        <span class="s-num">1</span><span class="s-text">&Uuml;bersicht</span>
+      </div>
+      <div class="step-conn" data-after="1"></div>
+      <div class="step-pill" data-step="2">
+        <span class="s-num">2</span><span class="s-text">Ihre Daten</span>
+      </div>
+      <div class="step-conn" data-after="2"></div>
+      <div class="step-pill" data-step="3">
+        <span class="s-num">3</span><span class="s-text">Unterschrift</span>
+      </div>
+      <div class="step-conn" data-after="3"></div>
+      <div class="step-pill" data-step="4">
+        <span class="s-num">4</span><span class="s-text">Fertig</span>
       </div>
     </div>
 
@@ -629,20 +947,20 @@
     <div class="container" id="step-1-panel">
       <div class="card card-step">
         <div class="card-body text-center">
-          <div class="hero-icon mb-3"><i class="bi bi-shield-lock"></i></div>
-          <h2 class="fw-bold mb-2">SEPA Direct Debit Mandate</h2>
-          <p class="text-muted mb-4" style="max-width:480px;margin:0 auto;">
-            Complete your mandate in three easy steps: enter your details, sign digitally,
-            and download your signed document — all in under two minutes.
+          <div class="welcome-icon"><i class="bi bi-person-badge"></i></div>
+          <div class="welcome-title">Maklermandat</div>
+          <p class="welcome-sub">
+            Erteilen Sie Ihrem Versicherungs- und Finanzmakler die Vollmacht,
+            Sie umfassend zu betreuen &mdash; digital, sicher und in wenigen Minuten.
           </p>
-          <ul class="list-unstyled text-start d-inline-block mb-4" style="max-width:380px;">
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Legally binding digital signature</li>
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Secure end-to-end processing</li>
-            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Instant signed PDF download</li>
-          </ul>
+          <div class="feature-row">
+            <div class="feature-item"><span class="f-icon green"><i class="bi bi-check-lg"></i></span>Rechtsg&uuml;ltige digitale Unterschrift</div>
+            <div class="feature-item"><span class="f-icon blue"><i class="bi bi-lock"></i></span>DSGVO-konforme Datenverarbeitung</div>
+            <div class="feature-item"><span class="f-icon amber"><i class="bi bi-file-earmark-pdf"></i></span>Sofortiger Download als signiertes PDF</div>
+          </div>
           <div>
-            <button class="btn btn-brand btn-lg" id="btn-start" onclick="goTo(2)">
-              Get Started <i class="bi bi-arrow-right ms-1"></i>
+            <button class="btn btn-brand" id="btn-start" onclick="goTo(2)">
+              Jetzt starten <i class="bi bi-arrow-right ms-2"></i>
             </button>
           </div>
         </div>
@@ -651,47 +969,107 @@
 
     <!-- ===== STEP 2 — User Data ===== -->
     <div class="container d-none" id="step-2-panel">
-      <div class="card card-step">
+      <div class="card card-step" style="max-width:600px;">
         <div class="card-body">
-          <h4 class="fw-bold mb-1"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Your Information</h4>
-          <p class="text-muted small mb-4">All fields are required to generate the mandate.</p>
-          <form id="user-form" novalidate>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">First Name</label>
+          <h4 style="font-size:1.1rem;font-weight:700;color:#1d1f2f;margin-bottom:.2rem;">Ihre Angaben</h4>
+          <p style="font-size:.8rem;color:#8b8fa3;margin-bottom:1.2rem;">Bitte f&uuml;llen Sie alle Pflichtfelder aus, um das Maklermandat zu erstellen.</p>
+          <form id="user-form" class="funnel-form" novalidate>
+            <div class="row g-2">
+              <div class="col-3">
+                <label class="form-label">Anrede</label>
+                <select class="form-control form-select" id="title" required>
+                  <option value="">W&auml;hlen</option>
+                  <option value="Herr">Herr</option>
+                  <option value="Frau">Frau</option>
+                  <option value="Divers">Divers</option>
+                </select>
+              </div>
+              <div class="col">
+                <label class="form-label">Vorname</label>
                 <input type="text" class="form-control" id="firstName" required placeholder="Max">
               </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Last Name</label>
+              <div class="col">
+                <label class="form-label">Nachname</label>
                 <input type="text" class="form-control" id="lastName" required placeholder="Mustermann">
               </div>
-              <div class="col-12">
-                <label class="form-label fw-semibold">Street &amp; House Number</label>
-                <input type="text" class="form-control" id="street" required placeholder="Musterstra&szlig;e 42">
-              </div>
+            </div>
+            <div class="row g-2 mt-1">
               <div class="col-md-4">
-                <label class="form-label fw-semibold">ZIP Code</label>
-                <input type="text" class="form-control" id="zip" required placeholder="10115" maxlength="10">
-              </div>
-              <div class="col-md-8">
-                <label class="form-label fw-semibold">City</label>
-                <input type="text" class="form-control" id="city" required placeholder="Berlin">
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Date of Birth</label>
+                <label class="form-label">Geburtsdatum</label>
                 <input type="date" class="form-control" id="birthdate" required>
               </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Email <span class="text-muted fw-normal">(optional)</span></label>
+              <div class="col-md-4">
+                <label class="form-label">Geburtsort</label>
+                <input type="text" class="form-control" id="birthplace" placeholder="Frankfurt">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Staatsangeh.</label>
+                <input type="text" class="form-control" id="nationality" placeholder="deutsch">
+              </div>
+            </div>
+            <div class="row g-2 mt-1">
+              <div class="col">
+                <label class="form-label">Stra&szlig;e &amp; Nr.</label>
+                <input type="text" class="form-control" id="street" required placeholder="Kaiserstra&szlig;e 27">
+              </div>
+            </div>
+            <div class="row g-2 mt-1">
+              <div class="col-3">
+                <label class="form-label">PLZ</label>
+                <input type="text" class="form-control" id="zip" required placeholder="60311" maxlength="10">
+              </div>
+              <div class="col">
+                <label class="form-label">Ort</label>
+                <input type="text" class="form-control" id="city" required placeholder="Frankfurt am Main">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Land</label>
+                <input type="text" class="form-control" id="country" placeholder="Deutschland">
+              </div>
+            </div>
+            <div class="row g-2 mt-1">
+              <div class="col-md-5">
+                <label class="form-label">Telefon / Mobil</label>
+                <input type="tel" class="form-control" id="phone" placeholder="+49 170 9876543">
+              </div>
+              <div class="col">
+                <label class="form-label">E-Mail</label>
                 <input type="email" class="form-control" id="email" placeholder="max@example.de">
               </div>
             </div>
+            <div class="row g-2 mt-1">
+              <div class="col-md-5">
+                <label class="form-label">Ausweisart</label>
+                <select class="form-control form-select" id="idType">
+                  <option value="Personalausweis">Personalausweis</option>
+                  <option value="Reisepass">Reisepass</option>
+                </select>
+              </div>
+              <div class="col">
+                <label class="form-label">Ausweisnummer</label>
+                <input type="text" class="form-control" id="idNumber" placeholder="L01X00T47">
+              </div>
+            </div>
+
+            <div style="font-size:.68rem;font-weight:600;color:#8b8fa3;margin:1rem 0 .4rem;letter-spacing:.3px;">BESTEHENDE VERTR&Auml;GE <span style="font-weight:400;">(optional)</span></div>
+            <div class="row g-2">
+              <div class="col-12">
+                <input type="text" class="form-control" id="contract1" placeholder="z.B. Allianz / Haftpflicht / VS-123456789">
+              </div>
+              <div class="col-12">
+                <input type="text" class="form-control" id="contract2" placeholder="z.B. HUK-Coburg / KFZ / KH-987654321">
+              </div>
+              <div class="col-12">
+                <input type="text" class="form-control" id="contract3" placeholder="z.B. Debeka / PKV / 1234567">
+              </div>
+            </div>
+
             <div class="d-flex justify-content-between mt-4">
-              <button type="button" class="btn btn-outline-secondary" onclick="goTo(1)">
-                <i class="bi bi-arrow-left me-1"></i> Back
+              <button type="button" class="btn btn-ghost" onclick="goTo(1)">
+                <i class="bi bi-arrow-left me-1"></i> Zur&uuml;ck
               </button>
               <button type="submit" class="btn btn-brand" id="btn-submit">
-                Generate &amp; Sign <i class="bi bi-arrow-right ms-1"></i>
+                Mandat erstellen <i class="bi bi-arrow-right ms-1"></i>
               </button>
             </div>
           </form>
@@ -701,17 +1079,16 @@
 
     <!-- ===== STEP 3 — Embedded Signature Pad ===== -->
     <div class="container d-none" id="step-3-panel">
-      <div class="card card-step" style="max-width:760px;">
+      <div class="card card-step" style="max-width:600px;">
         <div class="card-body">
-          <h4 class="fw-bold mb-1"><i class="bi bi-vector-pen me-2 text-primary"></i>Sign Your Mandate</h4>
-          <p class="text-muted small mb-3">
-            Draw your signature in the pad below using your mouse, touchpad or finger.
-            Click <strong>Confirm</strong> when done.
+          <h4 style="font-size:1.1rem;font-weight:700;color:#1d1f2f;margin-bottom:.2rem;">Maklermandat unterschreiben</h4>
+          <p style="font-size:.8rem;color:#8b8fa3;margin-bottom:1rem;">
+            Zeichnen Sie Ihre Unterschrift mit Maus, Touchpad oder Finger.
           </p>
 
-          <div id="sig-loading" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 text-muted">Preparing signature pad...</p>
+          <div id="sig-loading" class="text-center py-4">
+            <div class="spinner-border spinner-border-sm" style="color:var(--brand);" role="status"></div>
+            <p class="mt-2" style="font-size:.82rem;color:#8b8fa3;">Unterschriftenfeld wird geladen...</p>
           </div>
 
           <!-- Signature fields will be dynamically created here -->
@@ -737,11 +1114,11 @@
           <div id="insign-status-bar" class="d-none">Status: loading...</div>
 
           <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-outline-secondary" onclick="goTo(2)">
-              <i class="bi bi-arrow-left me-1"></i> Back
+            <button class="btn btn-ghost" onclick="goTo(2)">
+              <i class="bi bi-arrow-left me-1"></i> Zur&uuml;ck
             </button>
             <button class="btn btn-brand" id="btn-finish" onclick="finishSigning()">
-              Finish &amp; Download <i class="bi bi-arrow-right ms-1"></i>
+              Abschlie&szlig;en &amp; Download <i class="bi bi-arrow-right ms-1"></i>
             </button>
           </div>
         </div>
@@ -752,29 +1129,20 @@
     <div class="container d-none" id="step-4-panel">
       <div class="card card-step">
         <div class="card-body text-center">
-          <div class="hero-icon mb-3 text-success"><i class="bi bi-check-circle-fill"></i></div>
-          <h2 class="fw-bold mb-2">Mandate Signed Successfully!</h2>
-          <p class="text-muted mb-4">Your SEPA Direct Debit Mandate has been digitally signed and is ready for download.</p>
-          <div class="mb-4">
-            <iframe id="pdf-preview" style="width:100%;height:500px;border:1px solid #dee2e6;border-radius:8px;" title="Signed PDF Preview"></iframe>
+          <div class="done-badge"><i class="bi bi-check-lg"></i></div>
+          <div class="done-title">Maklermandat erfolgreich unterschrieben</div>
+          <p style="font-size:.84rem;color:#8b8fa3;margin-bottom:1.2rem;">Ihr Maklermandat wurde digital signiert und steht zum Download bereit.</p>
+          <div class="mb-3">
+            <iframe id="pdf-preview" class="pdf-frame" title="Signed PDF Preview"></iframe>
           </div>
-          <div class="d-flex justify-content-center gap-3">
-            <a id="btn-download" class="btn btn-accent btn-lg" download="SEPA-Mandat-signed.pdf">
-              <i class="bi bi-download me-1"></i> Download PDF
+          <div class="d-flex justify-content-center gap-2">
+            <a id="btn-download" class="btn btn-accent" download="Maklermandat-signed.pdf">
+              <i class="bi bi-download me-1"></i> PDF herunterladen
             </a>
-            <button class="btn btn-outline-secondary btn-lg" onclick="location.reload()">
-              <i class="bi bi-arrow-repeat me-1"></i> New Mandate
+            <button class="btn btn-ghost" onclick="location.reload()">
+              <i class="bi bi-arrow-repeat me-1"></i> Neues Mandat
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== GENERAL MANUAL (shown on step 4 inside main) ===== -->
-    <div class="container d-none" id="general-manual-panel">
-      <div class="general-manual">
-        <div class="card" style="border:2px solid var(--brand); border-radius:12px;">
-          <div class="card-body doc-md" data-src="/docs/integration-manual.md">Loading...</div>
         </div>
       </div>
     </div>
@@ -782,12 +1150,12 @@
     <!-- ===== DEPLOY OPTIONS (shown on step 4) ===== -->
     <div class="container d-none" id="deploy-panel">
       <div class="general-manual">
-        <div class="card" style="border:2px solid var(--brand); border-radius:12px;">
+        <div class="card" style="border:1px solid #e0e2ec; border-radius:12px;">
           <div class="card-body">
-            <h4 class="fw-bold mb-3" style="color:var(--brand);"><i class="bi bi-cloud-arrow-up me-2"></i>Deploy This Demo</h4>
-            <p class="text-muted mb-4">Run this demo on any of these platforms. The backend logic is shared across all variants — no code duplication.</p>
+            <h4 style="font-size:1.1rem;font-weight:700;color:#1d1f2f;margin-bottom:.3rem;"><i class="bi bi-cloud-arrow-up me-2" style="color:var(--brand);"></i>Deploy This Demo</h4>
+            <p style="font-size:.82rem;color:#8b8fa3;margin-bottom:1.2rem;">Run this demo on any of these platforms. The backend logic is shared across all variants.</p>
 
-            <div class="row g-3">
+            <div class="row g-3 deploy-grid">
 
               <!-- Local -->
               <div class="col-md-6">
@@ -893,6 +1261,7 @@ docker run -p 3000:3000 sig-funnel</code></pre>
       </div>
     </div>
 
+    </div><!-- /funnel-scroll -->
   </div><!-- /main-content -->
 </div><!-- /app-layout -->
 
@@ -1081,13 +1450,23 @@ docker run -p 3000:3000 sig-funnel</code></pre>
 
   // Prefill form with test data (remove this in production!)
   document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('title').value = 'Herr';
     document.getElementById('firstName').value = 'Max';
     document.getElementById('lastName').value = 'Mustermann';
-    document.getElementById('street').value = 'Musterstra\u00dfe 42';
-    document.getElementById('zip').value = '10115';
-    document.getElementById('city').value = 'Berlin';
-    document.getElementById('birthdate').value = '1990-05-15';
-    document.getElementById('email').value = 'max@example.de';
+    document.getElementById('birthdate').value = '1985-03-14';
+    document.getElementById('birthplace').value = 'Frankfurt am Main';
+    document.getElementById('nationality').value = 'deutsch';
+    document.getElementById('street').value = 'Kaiserstra\u00dfe 27';
+    document.getElementById('zip').value = '60311';
+    document.getElementById('city').value = 'Frankfurt am Main';
+    document.getElementById('country').value = 'Deutschland';
+    document.getElementById('phone').value = '+49 170 9876543';
+    document.getElementById('email').value = 'max.mustermann@example.de';
+    document.getElementById('idType').value = 'Personalausweis';
+    document.getElementById('idNumber').value = 'L01X00T47';
+    document.getElementById('contract1').value = 'Allianz / Privathaftpflicht / VS-3847561';
+    document.getElementById('contract2').value = 'HUK-Coburg / KFZ-Versicherung / KH-9912034';
+    document.getElementById('contract3').value = 'Debeka / Private Krankenversicherung / 7781923';
   });
 
   // ---------- Step Navigation ----------
@@ -1095,20 +1474,28 @@ docker run -p 3000:3000 sig-funnel</code></pre>
     for (let i = 1; i <= 4; i++) {
       document.getElementById(`step-${i}-panel`).classList.toggle('d-none', i !== step);
     }
-    // Show general manual + deploy options only on step 4
-    const manual = document.getElementById('general-manual-panel');
-    if (manual) manual.classList.toggle('d-none', step !== 4);
+    // Show deploy options only on step 4
     const deploy = document.getElementById('deploy-panel');
     if (deploy) deploy.classList.toggle('d-none', step !== 4);
 
-    document.querySelectorAll('.step-dot').forEach(dot => {
-      const s = parseInt(dot.dataset.step);
-      dot.classList.remove('active', 'done');
-      if (s < step) dot.classList.add('done');
-      if (s === step) dot.classList.add('active');
+    document.querySelectorAll('.step-pill').forEach(pill => {
+      const s = parseInt(pill.dataset.step);
+      pill.classList.remove('active', 'done');
+      if (s < step) {
+        pill.classList.add('done');
+        pill.querySelector('.s-num').innerHTML = '<i class="bi bi-check-lg"></i>';
+      } else {
+        pill.querySelector('.s-num').textContent = s;
+      }
+      if (s === step) pill.classList.add('active');
+    });
+    document.querySelectorAll('.step-conn').forEach(conn => {
+      const after = parseInt(conn.dataset.after);
+      conn.classList.toggle('done', after < step);
     });
     currentStep = step;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var scroll = document.querySelector('.funnel-scroll');
+    if (scroll) scroll.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Sync sidebar docs to current step
     if (window._syncSidebarTab) window._syncSidebarTab(step);
@@ -1132,18 +1519,28 @@ docker run -p 3000:3000 sig-funnel</code></pre>
     if (!this.checkValidity()) { this.classList.add('was-validated'); return; }
 
     const btn = $('#btn-submit');
-    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Generating\u2026');
+    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Wird erstellt\u2026');
 
     try {
       // Collect form data to send to our backend
       const payload = {
-        firstName: $('#firstName').val().trim(),
-        lastName:  $('#lastName').val().trim(),
-        street:    $('#street').val().trim(),
-        zip:       $('#zip').val().trim(),
-        city:      $('#city').val().trim(),
-        birthdate: $('#birthdate').val(),
-        email:     $('#email').val().trim() || undefined
+        title:       $('#title').val(),
+        firstName:   $('#firstName').val().trim(),
+        lastName:    $('#lastName').val().trim(),
+        birthdate:   $('#birthdate').val(),
+        birthplace:  $('#birthplace').val().trim() || undefined,
+        nationality: $('#nationality').val().trim() || undefined,
+        street:      $('#street').val().trim(),
+        zip:         $('#zip').val().trim(),
+        city:        $('#city').val().trim(),
+        country:     $('#country').val().trim() || undefined,
+        phone:       $('#phone').val().trim() || undefined,
+        email:       $('#email').val().trim() || undefined,
+        idType:      $('#idType').val() || undefined,
+        idNumber:    $('#idNumber').val().trim() || undefined,
+        contract1:   $('#contract1').val().trim() || undefined,
+        contract2:   $('#contract2').val().trim() || undefined,
+        contract3:   $('#contract3').val().trim() || undefined
       };
 
       // POST to our backend — this triggers the inSign /configure/session call
@@ -1161,7 +1558,7 @@ docker run -p 3000:3000 sig-funnel</code></pre>
     } catch (err) {
       alert('Error: ' + (err.responseJSON?.error || 'Something went wrong.'));
     } finally {
-      btn.prop('disabled', false).html('Generate & Sign <i class="bi bi-arrow-right ms-1"></i>');
+      btn.prop('disabled', false).html('Mandat erstellen <i class="bi bi-arrow-right ms-1"></i>');
     }
   });
 
@@ -1340,10 +1737,11 @@ docker run -p 3000:3000 sig-funnel</code></pre>
   //
   // When the user clicks "Finish & Download":
   //   1. Check that all signature pads have been drawn on
-  //   2. Call INSIGNAPP.embedded.sendSignature() for each pad — this sends
-  //      the stroke data directly to inSign via POST /put/signaturedata
+  //   2. Call INSIGNAPP.embedded.sendSignature() for each pad sequentially
+  //      (wait for each /store/document response before sending the next) —
+  //      this sends stroke data directly to inSign via POST /put/signaturedata
   //      (authenticated by the INSIGN_JWT header, no backend involvement)
-  //   3. Once all signatures are sent, move to Step 4
+  //   3. Once all signatures are sent in order, move to Step 4
   //   4. Step 4 loads the signed PDF from our backend (GET /api/session/:key/document)
   //      — the backend fetches it from inSign using controller credentials
   //   5. Call INSIGNAPP.embedded.unpair() to clean up the inSign session
@@ -1362,31 +1760,30 @@ docker run -p 3000:3000 sig-funnel</code></pre>
     });
 
     if (!allReady) {
-      showToast('Please draw your signature first.');
+      showToast('Bitte zeichnen Sie zuerst Ihre Unterschrift.');
       return;
     }
 
-    // Send all signatures
+    // Send all signatures sequentially (wait for each /store/document to return before sending the next)
     const btn = $('#btn-finish');
-    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Sending\u2026');
+    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Wird gesendet\u2026');
 
-    let pending = 0;
-    pads.each(function () {
-      const $wrap = $(this);
-      if ($wrap.find('canvas.pad').length === 0) return;
-      pending++;
+    const wraps = pads.filter(function () {
+      return $(this).find('canvas.pad').length > 0;
+    }).toArray();
+
+    (function sendNext(i) {
+      if (i >= wraps.length) { proceedToStep4(); return; }
+      const $wrap = $(wraps[i]);
       INSIGNAPP.embedded.sendSignature($wrap, function (id, imgB64, field) {
         field.replaceWith('<img src="' + imgB64 + '" class="sig-done-img" style="height:150px;" />');
-        pending--;
-        if (pending <= 0) proceedToStep4();
+        sendNext(i + 1);
       });
-    });
-
-    if (pending === 0) proceedToStep4();
+    })(0);
 
     function proceedToStep4() {
       if (statusTimer) clearTimeout(statusTimer);
-      btn.prop('disabled', false).html('Finish & Download <i class="bi bi-arrow-right ms-1"></i>');
+      btn.prop('disabled', false).html('Abschlie\u00dfen & Download <i class="bi bi-arrow-right ms-1"></i>');
       goTo(4);
 
       // Set preview and download URLs

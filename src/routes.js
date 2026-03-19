@@ -24,13 +24,24 @@ const sessions = new Map();
 // ============================================================================
 async function createSession(req, res) {
   try {
-    const { firstName, lastName, street, zip, city, birthdate } = req.body;
+    const {
+      title, firstName, lastName, birthdate, birthplace, nationality,
+      street, zip, city, country, phone, email,
+      idType, idNumber, contract1, contract2, contract3
+    } = req.body;
 
     if (!firstName || !lastName || !street || !zip || !city || !birthdate) {
-      return res.status(400).json({ error: 'All fields are required.' });
+      return res.status(400).json({ error: 'Required fields are missing.' });
     }
 
-    const userData = { firstName, lastName, street, zip, city, birthdate };
+    // Auto-generate signing date
+    const signDate = `${city}, ${new Date().toLocaleDateString('de-DE')}`;
+
+    const userData = {
+      title, firstName, lastName, birthdate, birthplace, nationality,
+      street, zip, city, country, phone, email,
+      idType, idNumber, contract1, contract2, contract3, signDate
+    };
     const sessionKey = require('uuid').v4();
     const docId = 'mandate-doc';
 
@@ -42,7 +53,7 @@ async function createSession(req, res) {
 
     // Single API call: create session + upload PDF + prefill fields + get JWT
     const sessionResult = await insign.createSession(
-      `SEPA Mandate - ${firstName} ${lastName}`,
+      `Maklermandat - ${firstName} ${lastName}`,
       sessionKey, docId, preFilledFields, pdfBuffer
     );
 
@@ -96,7 +107,7 @@ async function getDocument(req, res, disposition) {
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition',
-      `${disposition || 'inline'}; filename="SEPA-Mandat-signed.pdf"`);
+      `${disposition || 'inline'}; filename="Maklermandat-signed.pdf"`);
     res.send(pdfBuffer);
   } catch (err) {
     console.error('Error downloading document:', err.response?.data || err.message);

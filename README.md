@@ -237,8 +237,10 @@ sig-funnel/
   .insign-docs/              # Internal inSign reference docs (gitignored)
   .insign-docs/              # Internal inSign reference docs (gitignored)
   tests/
+    playwright.config.js    # Playwright test configuration
     funnel.spec.js          # Playwright end-to-end tests
-  mandate-template.pdf      # Auto-generated PDF template (delete to regenerate)
+  assets/
+    mandate-template.pdf    # Auto-generated PDF template (delete to regenerate)
 ```
 
 ---
