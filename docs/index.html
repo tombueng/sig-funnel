@@ -6,6 +6,7 @@
   <title>Maklermandat — Digitale Unterschrift</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
   <!-- Inter font for modern dev aesthetic -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -538,6 +539,133 @@
       background: #fafbfe;
     }
 
+    /* ---- Send to Phone panel ---- */
+    .phone-panel {
+      border: 1.5px solid #e0e2ec;
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #f8f9fd;
+      margin-bottom: .8rem;
+    }
+    .phone-panel .panel-title {
+      font-size: .78rem;
+      font-weight: 700;
+      color: #1d1f2f;
+      margin-bottom: .6rem;
+    }
+    .phone-panel .input-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+    }
+    .phone-panel .input-row input {
+      flex: 1;
+      font-size: .82rem;
+    }
+    .phone-panel .qr-area {
+      text-align: center;
+      margin-top: .8rem;
+      padding-top: .8rem;
+      border-top: 1px solid #e8eaf0;
+    }
+    .phone-panel .qr-area canvas {
+      border-radius: 10px;
+      border: 1px solid #e0e2ec;
+    }
+    .phone-panel .qr-label {
+      font-size: .68rem;
+      color: #8b8fa3;
+      margin-top: .4rem;
+    }
+    .phone-panel .or-divider {
+      text-align: center;
+      font-size: .7rem;
+      color: #8b8fa3;
+      margin: .6rem 0;
+      font-weight: 600;
+    }
+
+    /* ---- Remote signing status overlay ---- */
+    .remote-status-overlay {
+      border: 1.5px solid var(--brand);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      background: linear-gradient(135deg, #f0f2ff 0%, #fafbfe 100%);
+      text-align: center;
+      margin-bottom: .8rem;
+    }
+    .remote-status-overlay .status-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e0e2ec;
+      border-top-color: var(--brand);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto .8rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .remote-status-overlay .status-text {
+      font-size: .9rem;
+      font-weight: 600;
+      color: #1d1f2f;
+    }
+    .remote-status-overlay .status-sub {
+      font-size: .78rem;
+      color: #8b8fa3;
+      margin-top: .3rem;
+    }
+    .remote-status-overlay .status-icon {
+      font-size: 2.5rem;
+      color: var(--accent);
+    }
+
+    /* ---- Real name / location input ---- */
+    .realinput-panel {
+      border: 1.5px solid #e0e2ec;
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #fafbfe;
+      margin-bottom: .8rem;
+    }
+    .realinput-panel label {
+      font-size: .78rem;
+      font-weight: 600;
+      color: #1d1f2f;
+    }
+    .realinput-panel .input-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+      margin-top: .4rem;
+    }
+    .realinput-panel .input-row input {
+      flex: 1;
+      font-size: .82rem;
+    }
+
+    /* ---- Mode toggle (Sign here / Send to Phone) ---- */
+    .sig-mode-toggle {
+      display: flex;
+      gap: .4rem;
+      margin-bottom: .8rem;
+    }
+    .sig-mode-toggle .btn {
+      flex: 1;
+      font-size: .78rem;
+      padding: .5rem .6rem;
+      border-radius: 8px;
+      font-weight: 600;
+      border: 1.5px solid #e0e2ec;
+      background: #fff;
+      color: #6b6f84;
+      transition: all .15s;
+    }
+    .sig-mode-toggle .btn.active {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
     /* Status bar */
     #insign-status-bar {
       font-size: .72rem;
@@ -1064,6 +1192,30 @@
               </div>
             </div>
 
+            <div style="font-size:.68rem;font-weight:600;color:#8b8fa3;margin:1rem 0 .4rem;letter-spacing:.3px;">SIGNATUR-OPTIONEN</div>
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="opt-realname">
+                  <label class="form-check-label" for="opt-realname" style="font-size:.8rem;">Name eingeben</label>
+                </div>
+                <div class="form-check ms-4">
+                  <input class="form-check-input" type="checkbox" id="opt-realname-skip">
+                  <label class="form-check-label" for="opt-realname-skip" style="font-size:.76rem;color:#8b8fa3;">&Uuml;berspringbar</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="opt-location">
+                  <label class="form-check-label" for="opt-location" style="font-size:.8rem;">Ort eingeben</label>
+                </div>
+                <div class="form-check ms-4">
+                  <input class="form-check-input" type="checkbox" id="opt-location-skip">
+                  <label class="form-check-label" for="opt-location-skip" style="font-size:.76rem;color:#8b8fa3;">&Uuml;berspringbar</label>
+                </div>
+              </div>
+            </div>
+
             <div class="d-flex justify-content-between mt-4">
               <button type="button" class="btn btn-ghost" onclick="goTo(1)">
                 <i class="bi bi-arrow-left me-1"></i> Zur&uuml;ck
@@ -1077,39 +1229,101 @@
       </div>
     </div>
 
-    <!-- ===== STEP 3 — Embedded Signature Pad ===== -->
+    <!-- ===== STEP 3 — Signature (Embedded or Remote) ===== -->
     <div class="container d-none" id="step-3-panel">
       <div class="card card-step" style="max-width:600px;">
         <div class="card-body">
           <h4 style="font-size:1.1rem;font-weight:700;color:#1d1f2f;margin-bottom:.2rem;">Maklermandat unterschreiben</h4>
           <p style="font-size:.8rem;color:#8b8fa3;margin-bottom:1rem;">
-            Zeichnen Sie Ihre Unterschrift mit Maus, Touchpad oder Finger.
+            Zeichnen Sie Ihre Unterschrift direkt oder senden Sie den Link an Ihr Smartphone.
           </p>
+
+          <!-- Mode toggle: Sign here vs Send to Phone -->
+          <div class="sig-mode-toggle" id="sig-mode-toggle">
+            <button class="btn active" data-mode="embedded" onclick="switchSignMode('embedded')">
+              <i class="bi bi-pencil me-1"></i> Hier unterschreiben
+            </button>
+            <button class="btn" data-mode="remote" onclick="switchSignMode('remote')">
+              <i class="bi bi-phone me-1"></i> An Smartphone senden
+            </button>
+          </div>
 
           <div id="sig-loading" class="text-center py-4">
             <div class="spinner-border spinner-border-sm" style="color:var(--brand);" role="status"></div>
             <p class="mt-2" style="font-size:.82rem;color:#8b8fa3;">Unterschriftenfeld wird geladen...</p>
           </div>
 
-          <!-- Signature fields will be dynamically created here -->
-          <div id="sig-container" class="d-none"></div>
-
-          <!-- Signature pad template (cloned per field) -->
-          <template id="sigPadTemplate">
-            <div class="sig-field-wrap" data-sigidx="">
-              <div class="sig-label"></div>
-              <div class="sigPad">
-                <div class="sig sigWrapper">
-                  <canvas class="pad" width="600" height="160"></canvas>
-                </div>
-              </div>
-              <div class="sig-actions">
-                <button type="button" class="btn btn-sm btn-outline-secondary btn-clear">
-                  <i class="bi bi-eraser me-1"></i>Clear
-                </button>
+          <!-- ---- EMBEDDED MODE: signature pads ---- -->
+          <div id="embedded-mode">
+            <!-- Real name input (shown if realNameInputRequired) -->
+            <div id="realname-panel" class="realinput-panel d-none">
+              <label><i class="bi bi-person me-1"></i> Vollst&auml;ndiger Name</label>
+              <div class="input-row">
+                <input type="text" class="form-control" id="realNameInput" placeholder="Bitte Ihren vollst&auml;ndigen Namen eingeben">
+                <button class="btn btn-sm btn-brand" id="realname-ok" onclick="submitRealName()">OK</button>
+                <button class="btn btn-sm btn-outline-secondary d-none" id="realname-skip" onclick="skipRealName()">&Uuml;berspringen</button>
               </div>
             </div>
-          </template>
+
+            <!-- Real location input (shown if realLocationInputRequired) -->
+            <div id="reallocation-panel" class="realinput-panel d-none">
+              <label><i class="bi bi-geo-alt me-1"></i> Ort der Unterschrift</label>
+              <div class="input-row">
+                <input type="text" class="form-control" id="realLocationInput" placeholder="z.B. Frankfurt am Main">
+                <button class="btn btn-sm btn-brand" id="reallocation-ok" onclick="submitRealLocation()">OK</button>
+                <button class="btn btn-sm btn-outline-secondary d-none" id="reallocation-skip" onclick="skipRealLocation()">&Uuml;berspringen</button>
+              </div>
+            </div>
+
+            <!-- Signature fields will be dynamically created here -->
+            <div id="sig-container" class="d-none"></div>
+
+            <!-- Signature pad template (cloned per field) -->
+            <template id="sigPadTemplate">
+              <div class="sig-field-wrap" data-sigidx="">
+                <div class="sig-label"></div>
+                <div class="sigPad">
+                  <div class="sig sigWrapper">
+                    <canvas class="pad" width="600" height="160"></canvas>
+                  </div>
+                </div>
+                <div class="sig-actions">
+                  <button type="button" class="btn btn-sm btn-outline-secondary btn-clear">
+                    <i class="bi bi-eraser me-1"></i>Clear
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- ---- REMOTE MODE: Send to Phone ---- -->
+          <div id="remote-mode" class="d-none">
+            <!-- Phone panel (input + QR) -->
+            <div id="phone-panel" class="phone-panel">
+              <div class="panel-title"><i class="bi bi-phone me-1"></i> An Smartphone senden</div>
+              <div class="input-row">
+                <input type="tel" class="form-control" id="sms-phone" placeholder="+49 170 1234567">
+                <button class="btn btn-sm btn-brand" id="btn-send-sms" onclick="sendSmsLink()">
+                  <i class="bi bi-send me-1"></i> SMS senden
+                </button>
+              </div>
+              <div class="or-divider">- oder QR-Code scannen -</div>
+              <div class="qr-area">
+                <canvas id="qr-canvas"></canvas>
+                <div class="qr-label">QR-Code mit Smartphone scannen</div>
+              </div>
+            </div>
+
+            <!-- Remote status overlay (shown after SMS sent / phone connected) -->
+            <div id="remote-status" class="remote-status-overlay d-none">
+              <div class="status-spinner" id="remote-spinner"></div>
+              <div class="status-text" id="remote-status-text">SMS wird gesendet...</div>
+              <div class="status-sub" id="remote-status-sub">Bitte &ouml;ffnen Sie den Link auf Ihrem Smartphone.</div>
+              <button class="btn btn-sm btn-outline-secondary mt-3 d-none" id="btn-cancel-remote" onclick="cancelRemoteSigning()">
+                <i class="bi bi-x-circle me-1"></i> Abbrechen
+              </button>
+            </div>
+          </div>
 
           <div id="insign-status-bar" class="d-none">Status: loading...</div>
 
@@ -1180,7 +1394,7 @@ npm start</code></pre>
                   <div class="card-body">
                     <h6 class="fw-bold"><img src="https://www.google.com/s2/favicons?domain=glitch.com&sz=32" width="20" class="me-2" alt="">Glitch <span class="badge bg-success ms-1">Free</span></h6>
                     <p class="small text-muted mb-2">Edit &amp; run in the browser. Instant URL. No install.</p>
-                    <a href="https://glitch.com/edit/#!/import/github/<your-org>/sig-funnel" target="_blank" class="btn btn-sm btn-brand w-100 mb-2">
+                    <a href="https://glitch.com/edit/#!/import/github/tombueng/sig-funnel" target="_blank" class="btn btn-sm btn-brand w-100 mb-2">
                       <i class="bi bi-box-arrow-up-right me-1"></i> Remix on Glitch
                     </a>
                     <p class="small text-muted mb-0">Or paste in Glitch: <code>Import from GitHub</code> &rarr; repo URL</p>
@@ -1194,7 +1408,7 @@ npm start</code></pre>
                   <div class="card-body">
                     <h6 class="fw-bold"><img src="https://www.google.com/s2/favicons?domain=stackblitz.com&sz=32" width="20" class="me-2" alt="">StackBlitz <span class="badge bg-success ms-1">Free</span></h6>
                     <p class="small text-muted mb-2">Runs Node.js <strong>inside your browser</strong> via WebContainers. Nothing to install.</p>
-                    <a href="https://stackblitz.com/github/<your-org>/sig-funnel" target="_blank" class="btn btn-sm btn-brand w-100 mb-2">
+                    <a href="https://stackblitz.com/github/tombueng/sig-funnel" target="_blank" class="btn btn-sm btn-brand w-100 mb-2">
                       <i class="bi bi-box-arrow-up-right me-1"></i> Open in StackBlitz
                     </a>
                   </div>
@@ -1207,7 +1421,7 @@ npm start</code></pre>
                   <div class="card-body">
                     <h6 class="fw-bold"><img src="https://www.google.com/s2/favicons?domain=vercel.com&sz=32" width="20" class="me-2" alt="">Vercel <span class="badge bg-info ms-1">Serverless</span></h6>
                     <p class="small text-muted mb-2">Deploys as serverless functions. Free tier. Set env vars in dashboard.</p>
-                    <a href="https://vercel.com/new/clone?repository-url=https://github.com/<your-org>/sig-funnel&env=INSIGN_URL,INSIGN_USER,INSIGN_PASS" target="_blank" class="btn btn-sm btn-brand w-100 mb-2">
+                    <a href="https://vercel.com/new/clone?repository-url=https://github.com/tombueng/sig-funnel&env=INSIGN_URL,INSIGN_USER,INSIGN_PASS" target="_blank" class="btn btn-sm btn-brand w-100 mb-2">
                       <i class="bi bi-box-arrow-up-right me-1"></i> Deploy to Vercel
                     </a>
                     <div class="position-relative">
@@ -1430,7 +1644,7 @@ docker run -p 3000:3000 sig-funnel</code></pre>
   // This script handles the 4-step signing flow:
   //   Step 1: Welcome page (static)
   //   Step 2: Collect user data -> POST to backend -> receive JWT + inSign URL
-  //   Step 3: Load inSign JS directly from inSign server -> render signature pad
+  //   Step 3: Load inSign JS -> render signature pad (embedded) or send to phone (SMS/QR)
   //   Step 4: Download signed PDF from backend
   //
   // After Step 2, the browser talks DIRECTLY to the inSign server.
@@ -1540,7 +1754,11 @@ docker run -p 3000:3000 sig-funnel</code></pre>
         idNumber:    $('#idNumber').val().trim() || undefined,
         contract1:   $('#contract1').val().trim() || undefined,
         contract2:   $('#contract2').val().trim() || undefined,
-        contract3:   $('#contract3').val().trim() || undefined
+        contract3:   $('#contract3').val().trim() || undefined,
+        nameInputRequired:      $('#opt-realname').is(':checked') || undefined,
+        nameInputSkippable:     $('#opt-realname-skip').is(':checked') || undefined,
+        locationInputRequired:  $('#opt-location').is(':checked') || undefined,
+        locationInputSkippable: $('#opt-location-skip').is(':checked') || undefined
       };
 
       // POST to our backend — this triggers the inSign /configure/session call
@@ -1551,6 +1769,9 @@ docker run -p 3000:3000 sig-funnel</code></pre>
       insignSessionId = res.insignSessionId;  // inSign session ID
       insignJwt = res.jwt;                    // JWT for authenticating with inSign
       INSIGN_ROOT = res.insignBase.replace(/\/?$/, '/'); // inSign base URL (trailing slash!)
+
+      // Prefill SMS phone from form
+      if (payload.phone) $('#sms-phone').val(payload.phone);
 
       // Move to step 3 and load the inSign embedded signature pad
       goTo(3);
@@ -1626,6 +1847,9 @@ docker run -p 3000:3000 sig-funnel</code></pre>
             return;
           }
 
+          // Reset sigFieldsData for remote signing
+          sigFieldsData = [];
+
           // Create a signature pad <canvas> for each signature field
           const tpl = document.getElementById('sigPadTemplate');
           signatures.data.forEach(function (sigData, idx) {
@@ -1662,12 +1886,18 @@ docker run -p 3000:3000 sig-funnel</code></pre>
               INSIGNAPP.embedded.initSignaturePad(sigData.docid, sigData.id, $wrap);
               INSIGNAPP.embedded.initSignatureObject(sigData.docid, sigData.id, $wrap);
 
+              // Store field reference for remote signing
+              sigFieldsData.push({ sigData: sigData, $wrap: $wrap });
+
               // Wire up the "Clear" button to reset the canvas
               $wrap.find('.btn-clear').on('click', function () {
                 INSIGNAPP.embedded.clearSignature($wrap);
               });
             }
           });
+
+          // Show real name / location panels if required by inSign config
+          setupRealInputPanels();
 
           startStatusPolling();
           checkAllSigned();
@@ -1686,6 +1916,283 @@ docker run -p 3000:3000 sig-funnel</code></pre>
         '<div class="alert alert-danger">Failed to load inSign scripts. Please try again.</div>';
     };
     document.head.appendChild(s);
+  }
+
+  // ==========================================================================
+  // Sign Mode Toggle — switch between embedded canvas and remote (phone) mode
+  // ==========================================================================
+  let currentSignMode = 'embedded';  // 'embedded' or 'remote'
+
+  function switchSignMode(mode) {
+    currentSignMode = mode;
+    document.querySelectorAll('#sig-mode-toggle .btn').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    document.getElementById('embedded-mode').classList.toggle('d-none', mode !== 'embedded');
+    document.getElementById('remote-mode').classList.toggle('d-none', mode !== 'remote');
+
+    // Generate QR code when switching to remote mode
+    if (mode === 'remote') generateQrCode();
+  }
+
+  // ==========================================================================
+  // QR Code — render the inSign accessURL so the signer can scan with phone
+  // ==========================================================================
+  function generateQrCode() {
+    var canvas = document.getElementById('qr-canvas');
+    if (!canvas || typeof QRCode === 'undefined') return;
+
+    // The accessURL is the inSign signing URL for this session.
+    // On the phone, opening this link pairs the device and shows the sig pad.
+    var url = INSIGN_ROOT + 'start/sigpad/show?sessionid=' + insignSessionId
+            + '&jwt=' + encodeURIComponent(insignJwt);
+
+    QRCode.toCanvas(canvas, url, { width: 180, margin: 2 }, function (err) {
+      if (err) console.error('QR generation error:', err);
+    });
+  }
+
+  // ==========================================================================
+  // SMS Link — send signing link to phone via inSign /applos/send
+  // ==========================================================================
+  //
+  // INSIGNAPP.embedded.initSignSMS(phoneNumber, onSent, onPaired, onAlreadyPaired, onError)
+  //   - onSent:           SMS successfully sent, waiting for phone to connect
+  //   - onPaired:         Phone connected and paired — ready to trigger remote sign
+  //   - onAlreadyPaired:  Device was already paired (skip waiting)
+  //   - onError:          Sending SMS failed
+  //
+  function sendSmsLink() {
+    var phone = document.getElementById('sms-phone').value.trim();
+    if (!phone) { showToast('Bitte geben Sie eine Handynummer ein.'); return; }
+
+    var btn = document.getElementById('btn-send-sms');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>';
+
+    showRemoteStatus('SMS wird gesendet...', 'Bitte warten...');
+
+    INSIGNAPP.embedded.initSignSMS(phone,
+      // onSent — SMS delivered, waiting for phone to pair
+      function () {
+        console.log('SMS sent successfully');
+        showRemoteStatus('SMS gesendet!', 'Bitte \u00f6ffnen Sie den Link auf Ihrem Smartphone.');
+        document.getElementById('btn-cancel-remote').classList.remove('d-none');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send me-1"></i> SMS senden';
+      },
+      // onPaired — phone connected, now trigger the actual remote signature
+      function () {
+        console.log('Phone paired — starting remote sign');
+        startRemoteSign();
+      },
+      // onAlreadyPaired — device was already connected
+      function () {
+        console.log('Device already paired');
+        startRemoteSign();
+      },
+      // onError — SMS sending failed
+      function () {
+        showToast('SMS konnte nicht gesendet werden. Bitte Nummer pr\u00fcfen.');
+        hideRemoteStatus();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send me-1"></i> SMS senden';
+      }
+    );
+  }
+
+  // ==========================================================================
+  // Remote Signing — trigger signature on paired phone
+  // ==========================================================================
+  //
+  // After the phone is paired, we call INSIGNAPP.embedded.sign() for each
+  // signature field. The phone shows its own signature pad; when the user
+  // signs there, inSign receives the data and we get a callback.
+  //
+  // INSIGNAPP.embedded.sign(sigId, docId, position, onDone, onCancel, onError, onNotPaired)
+  //
+  let sigFieldsData = [];  // populated by loadInsignEmbedded
+
+  function startRemoteSign() {
+    if (sigFieldsData.length === 0) {
+      showToast('Keine Signaturfelder gefunden.');
+      return;
+    }
+
+    showRemoteStatus(
+      '<i class="bi bi-phone-vibrate" style="font-size:1.5rem;"></i> Smartphone verbunden!',
+      'Bitte unterschreiben Sie jetzt auf Ihrem Smartphone.'
+    );
+    document.getElementById('remote-spinner').style.display = 'none';
+    document.getElementById('btn-cancel-remote').classList.remove('d-none');
+
+    // Sign each field sequentially on the remote device
+    (function signFieldRemote(i) {
+      if (i >= sigFieldsData.length) {
+        // All fields signed remotely — proceed to finish
+        onAllRemoteSigned();
+        return;
+      }
+      var sf = sigFieldsData[i];
+      var $wrap = sf.$wrap;
+
+      showRemoteStatus(
+        'Unterschrift ' + (i + 1) + ' von ' + sigFieldsData.length,
+        'Bitte auf dem Smartphone unterschreiben...'
+      );
+      document.getElementById('remote-spinner').style.display = '';
+
+      INSIGNAPP.embedded.sign(
+        INSIGNAPP.embedded.getSigIDForObject($wrap),
+        INSIGNAPP.embedded.getDocIDForObject($wrap),
+        INSIGNAPP.embedded.getPositionForObject($wrap),
+        // onDone — signature completed on phone
+        function () {
+          INSIGNAPP.embedded.setSignatureImageForField($wrap);
+          $wrap.find('.sigPad').replaceWith(
+            '<div class="text-center py-2"><i class="bi bi-check-circle text-success" style="font-size:2rem;"></i><br><small class="text-muted">Auf Smartphone unterschrieben</small></div>'
+          );
+          signFieldRemote(i + 1);
+        },
+        // onCancel — user cancelled on phone
+        function () {
+          showToast('Signatur auf Smartphone abgebrochen.');
+          hideRemoteStatus();
+        },
+        // onError
+        function () {
+          showToast('Fehler bei der Smartphone-Signatur.');
+          hideRemoteStatus();
+        },
+        // onNotPaired
+        function () {
+          showToast('Kein Smartphone verbunden. Bitte erneut senden.');
+          hideRemoteStatus();
+        }
+      );
+    })(0);
+  }
+
+  function onAllRemoteSigned() {
+    // Show success, then proceed
+    document.getElementById('remote-spinner').style.display = 'none';
+    document.getElementById('remote-status-text').innerHTML =
+      '<i class="bi bi-check-circle text-success" style="font-size:2rem;"></i><br>Alle Unterschriften erfolgreich!';
+    document.getElementById('remote-status-sub').textContent =
+      'Dokument wird fertiggestellt...';
+    document.getElementById('btn-cancel-remote').classList.add('d-none');
+
+    // Unpair and proceed to Step 4
+    try { INSIGNAPP.embedded.unpair(function () {}); } catch (e) { /* ignore */ }
+
+    setTimeout(function () {
+      if (statusTimer) clearTimeout(statusTimer);
+      goTo(4);
+      var docUrl = '/api/session/' + sessionKey + '/document';
+      var dlUrl = '/api/session/' + sessionKey + '/document/download';
+      document.getElementById('pdf-preview').src = docUrl;
+      document.getElementById('btn-download').href = dlUrl;
+    }, 1500);
+  }
+
+  function cancelRemoteSigning() {
+    try {
+      // Cancel any in-progress remote signature
+      sigFieldsData.forEach(function (sf) {
+        try {
+          INSIGNAPP.embedded.cancelSign(
+            INSIGNAPP.embedded.getSigIDForObject(sf.$wrap),
+            INSIGNAPP.embedded.getDocIDForObject(sf.$wrap)
+          );
+        } catch (e) { /* ignore */ }
+      });
+      INSIGNAPP.embedded.unpair(function () {});
+    } catch (e) { /* ignore */ }
+    hideRemoteStatus();
+  }
+
+  // ==========================================================================
+  // Remote Status Display helpers
+  // ==========================================================================
+  function showRemoteStatus(text, sub) {
+    var el = document.getElementById('remote-status');
+    el.classList.remove('d-none');
+    document.getElementById('phone-panel').classList.add('d-none');
+    document.getElementById('remote-status-text').innerHTML = text;
+    document.getElementById('remote-status-sub').textContent = sub || '';
+    document.getElementById('remote-spinner').style.display = '';
+  }
+
+  function hideRemoteStatus() {
+    document.getElementById('remote-status').classList.add('d-none');
+    document.getElementById('phone-panel').classList.remove('d-none');
+    document.getElementById('btn-cancel-remote').classList.add('d-none');
+  }
+
+  // ==========================================================================
+  // Real Name & Location Input handling
+  // ==========================================================================
+  //
+  // When realNameInputRequired / realLocationInputRequired are set in the
+  // inSign session config, we show our own UI for collecting these values.
+  // The inSign JS library handles this via:
+  //   INSIGNAPP.embedded.waitForRealNameInput(field)  — shows the name prompt
+  //   INSIGNAPP.embedded.submitRealName(button)       — submits the name
+  //   INSIGNAPP.embedded.skipRealName(button)         — skips (if skippable)
+  //
+  // We wire our custom UI to these library functions.
+  //
+  function setupRealInputPanels() {
+    if (typeof INSIGNAPP === 'undefined' || !INSIGNAPP.config) return;
+
+    // Real Name
+    if (INSIGNAPP.config.realNameInputRequired) {
+      document.getElementById('realname-panel').classList.remove('d-none');
+      if (INSIGNAPP.config.realNameInputSkippable) {
+        document.getElementById('realname-skip').classList.remove('d-none');
+      }
+    }
+
+    // Real Location
+    if (INSIGNAPP.config.realLocationInputRequired) {
+      document.getElementById('reallocation-panel').classList.remove('d-none');
+      if (INSIGNAPP.config.realLocationInputSkippable) {
+        document.getElementById('reallocation-skip').classList.remove('d-none');
+      }
+    }
+  }
+
+  function submitRealName() {
+    var name = document.getElementById('realNameInput').value.trim();
+    if (!name) { showToast('Bitte geben Sie Ihren Namen ein.'); return; }
+    // Store the real name on each signature field wrapper so inSign picks it up
+    $('#sig-container .sig-field-wrap').each(function () {
+      $(this).data('realname', name);
+    });
+    document.getElementById('realname-panel').style.opacity = '.5';
+    document.getElementById('realname-panel').style.pointerEvents = 'none';
+    document.getElementById('realname-ok').innerHTML = '<i class="bi bi-check-lg"></i>';
+  }
+
+  function skipRealName() {
+    document.getElementById('realname-panel').style.opacity = '.5';
+    document.getElementById('realname-panel').style.pointerEvents = 'none';
+  }
+
+  function submitRealLocation() {
+    var loc = document.getElementById('realLocationInput').value.trim();
+    if (!loc) { showToast('Bitte geben Sie den Ort ein.'); return; }
+    $('#sig-container .sig-field-wrap').each(function () {
+      $(this).data('reallocation', loc);
+    });
+    document.getElementById('reallocation-panel').style.opacity = '.5';
+    document.getElementById('reallocation-panel').style.pointerEvents = 'none';
+    document.getElementById('reallocation-ok').innerHTML = '<i class="bi bi-check-lg"></i>';
+  }
+
+  function skipRealLocation() {
+    document.getElementById('reallocation-panel').style.opacity = '.5';
+    document.getElementById('reallocation-panel').style.pointerEvents = 'none';
   }
 
   // ==========================================================================

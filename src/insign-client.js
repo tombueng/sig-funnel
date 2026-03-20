@@ -78,10 +78,15 @@ function http() {
 //   docId            — Your chosen ID for the document (used in later API calls)
 //   preFilledFields  — Array of { id, type, text } to prefill AcroForm fields
 //   pdfBuffer        — Node.js Buffer containing the PDF file bytes
+//   opts             — Optional overrides:
+//                        nameInputRequired (bool)     — prompt for signer's real name
+//                        nameInputSkippable (bool)    — allow skipping name input
+//                        locationInputRequired (bool) — prompt for signer's location
+//                        locationInputSkippable (bool)— allow skipping location input
 //
 // Returns: { sessionid, jwt, error, message, token, accessURL, ... }
 //
-async function createSession(displayname, foruser, docId, preFilledFields, pdfBuffer) {
+async function createSession(displayname, foruser, docId, preFilledFields, pdfBuffer, opts) {
 
   // Build the document configuration object
   const docConfig = {
@@ -103,13 +108,19 @@ async function createSession(displayname, foruser, docId, preFilledFields, pdfBu
     docConfig.file = pdfBuffer.toString('base64');
   }
 
+  // Merge caller overrides (e.g. nameInputRequired, locationInputRequired)
+  const o = opts || {};
+
   // Build the full session configuration
   const body = {
     displayname,                  // Display name in inSign admin UI
     foruser,                      // Unique user/session identifier
     createJWT: true,              // ← CRITICAL: without this, no JWT is returned
-    nameInputRequired: false,     // Don't show name input popup (we handle UI ourselves)
-    locationInputRequired: false, // Don't show location input popup
+    nameInputRequired:      !!o.nameInputRequired,
+    nameInputSkippable:     !!o.nameInputSkippable,
+    locationInputRequired:  !!o.locationInputRequired,
+    locationInputSkippable: !!o.locationInputSkippable,
+    watermarkContent: '#tan# TESTVERSION|image:classpath:/insign_logo.png',    // default watermark on the document
     documents: [docConfig],       // Array of documents (we have one)
     uploadEnabled: false          // Don't allow the signer to upload additional documents
   };

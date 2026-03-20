@@ -27,7 +27,9 @@ async function createSession(req, res) {
     const {
       title, firstName, lastName, birthdate, birthplace, nationality,
       street, zip, city, country, phone, email,
-      idType, idNumber, contract1, contract2, contract3
+      idType, idNumber, contract1, contract2, contract3,
+      nameInputRequired, nameInputSkippable,
+      locationInputRequired, locationInputSkippable
     } = req.body;
 
     if (!firstName || !lastName || !street || !zip || !city || !birthdate) {
@@ -54,7 +56,8 @@ async function createSession(req, res) {
     // Single API call: create session + upload PDF + prefill fields + get JWT
     const sessionResult = await insign.createSession(
       `Maklermandat - ${firstName} ${lastName}`,
-      sessionKey, docId, preFilledFields, pdfBuffer
+      sessionKey, docId, preFilledFields, pdfBuffer,
+      { nameInputRequired, nameInputSkippable, locationInputRequired, locationInputSkippable }
     );
 
     sessions.set(sessionKey, {
